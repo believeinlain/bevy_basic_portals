@@ -37,7 +37,7 @@ pub(super) fn build_update(app: &mut App) {
 pub fn update_portal_cameras(
     mut commands: Commands,
     strategy: Res<PortalPartsDespawnStrategy>,
-    mut portal_cameras: Query<(&PortalCamera, &mut Transform, &mut GlobalTransform, &mut Frustum, &Projection), With<Camera>>,
+    mut portal_cameras: Query<(&PortalCamera, &mut Transform, &mut GlobalTransform, &mut Frustum, &PortalProjection), With<Camera>>,
     main_camera_query: Query<(Ref<GlobalTransform>, &Camera), Without<PortalCamera>>,
     portal_query: Query<(Ref<GlobalTransform>, &Handle<PortalMaterial>), (With<Portal>, Without<Camera>)>,
     destination_query: Query<Ref<GlobalTransform>, (With<PortalDestination>, Without<Camera>)>,
@@ -156,7 +156,7 @@ fn get_frustum(
     portal_camera: &PortalCamera,
     portal_camera_transform: &Transform,
     destination_transform: &Transform,
-    projection: &Projection,
+    projection: &PortalProjection,
 ) -> Frustum {
     let view_projection =
         projection.get_projection_matrix() * portal_camera_transform.compute_matrix().inverse();

@@ -252,28 +252,25 @@ fn create_portal(
         .clone()
         .into();
     let portal_camera_entity = commands.spawn((
-        Camera3dBundle {
-            camera: Camera {
-                order: -1,
-                target: RenderTarget::Image(portal_image.clone()),
-                ..Default::default()
-            },
-            projection: main_camera_projection
-                .unwrap_or(&camera_bundle.projection)
-                .clone(),
-            camera_3d: main_camera_camera3d
+        Camera {
+            order: -1,
+            target: RenderTarget::Image(portal_image.clone()),
+            ..Default::default()
+        },
+        projection,
+        main_camera_camera3d
                 .unwrap_or(&camera_bundle.camera_3d)
                 .clone(),
-            tonemapping: *main_camera_tonemapping.unwrap_or(&camera_bundle.tonemapping),
-            dither: *main_camera_dither.unwrap_or(&camera_bundle.dither),
-            color_grading: *main_camera_color_grading.unwrap_or(&camera_bundle.color_grading),
-            ..Default::default()
-        },
-        VisibilityBundle {
-            visibility: Visibility::Hidden,
-            ..Default::default()
-        },
-        create_portal.render_layer,
+                *main_camera_tonemapping.unwrap_or(&camera_bundle.tonemapping),
+                *main_camera_dither.unwrap_or(&camera_bundle.dither),
+                *main_camera_color_grading.unwrap_or(&camera_bundle.color_grading),
+                camera_bundle.camera_render_graph,
+                camera_bundle.visible_entities,
+                camera_bundle.frustum,
+                camera_bundle.transform,
+                camera_bundle.global_transform,
+                camera_bundle.exposure,
+                camera_bundle.main_texture_usages,
     )).id();
     // let portal_camera_entity = commands
     //     .spawn((

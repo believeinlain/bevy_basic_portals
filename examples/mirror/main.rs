@@ -26,11 +26,11 @@ fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>
 ) {
     // Light
-    commands.insert_resource(AmbientLight {
-        color: Color::WHITE,
-        brightness: 0.4,
-    });
-    commands.insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.2)));
+    // commands.insert_resource(AmbientLight {
+    //     color: Color::WHITE,
+    //     brightness: 0.4,
+    // });
+    // commands.insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.2)));
 
     // Camera
     let pivot = Vec3::ZERO;
@@ -48,7 +48,7 @@ fn setup(
 
     // Cube
     let debug_material = materials.add(textures::debug_material(&mut images, 1, None));
-    let cube_mesh = meshes.add(Mesh::from(shape::Cube{size:5.}));
+    let cube_mesh = meshes.add(Cuboid::new(5., 5., 5.));
     commands.spawn(PbrBundle {
         mesh: cube_mesh,
         material: debug_material,
@@ -56,16 +56,16 @@ fn setup(
     });
     
     // Torus
-    let torus_mesh = meshes.add(Mesh::from(shape::Torus{radius:2.5, ring_radius:0.5, ..default()}));
+    let torus_mesh = meshes.add(Torus::new(2., 3.).mesh());
     let torus = commands.spawn(PbrBundle {
         mesh: torus_mesh,
-        material: materials.add(Color::WHITE.into()),
+        material: materials.add(Color::WHITE),
         transform: Transform::from_xyz(0., 0., -5.),
         ..default()
     }).id();
 
     // Mirror
-    let portal_mesh = meshes.add(Mesh::from(shape::Quad::new(Vec2::new(10., 10.))));
+    let portal_mesh = meshes.add(Rectangle::new(10., 10.));
     let portal_transform = Transform::from_xyz(0., 0., -10.);
     let mut mirror = commands.spawn(CreatePortalBundle {
         mesh: portal_mesh,

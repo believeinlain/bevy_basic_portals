@@ -77,7 +77,7 @@ pub fn update_portal_cameras(
         }
         let destination_global_transform = destination_result.unwrap();
 
-        let portal_image_resized = resize_image_if_needed(portal_camera, main_camera, &mut resize_params, portal_material, &mut materials);
+        let portal_image_resized = resize_image_if_needed(portal_camera, main_camera, &mut resize_params);
 
         // Needed for update frustum later because of update_frusta
         let destination_transform = &destination_global_transform.compute_transform();
@@ -120,8 +120,8 @@ fn resize_image_if_needed(
     portal_camera: &PortalCamera,
     main_camera: &Camera,
     size_params: &mut PortalImageSizeParams,
-    portal_material: &Handle<PortalMaterial>,
-    materials: &mut Assets<PortalMaterial>,
+    // portal_material: &Handle<PortalMaterial>,
+    // materials: &mut Assets<PortalMaterial>,
 ) -> bool {
     let portal_image = size_params.images.get(&portal_camera.image).unwrap();
     let portal_image_size = portal_image.size();
@@ -133,11 +133,11 @@ fn resize_image_if_needed(
             height: main_camera_viewport_size.y,
             ..Extent3d::default()
         };
-        if let (Some(portal_image), Some(_)) = (
+        if let (Some(portal_image),) = (
             size_params.images.get_mut(&portal_camera.image),
             // This is needed so that the material is aware the image changed,
             // see https://github.com/bevyengine/bevy/issues/8767
-            materials.get_mut(portal_material)
+            // materials.get_mut(portal_material)
         ) {
             portal_image.texture_descriptor.size = size;
             portal_image.resize(size);
@@ -172,7 +172,7 @@ fn get_frustum(
         PortalMode::MaskedImageHalfSpaceFrustum(Some(half_space)) => {
             let rot = Quat::from_rotation_arc(
                 Vec3::NEG_Z,
-                destination_transform.forward(),
+                destination_transform.forward().normalize_or_zero(),
             );
             let near_half_space_normal = rot.mul_vec3(half_space.normal().into());
 
@@ -182,7 +182,7 @@ fn get_frustum(
             frustum.half_spaces[4] = HalfSpace::new(near_half_space_normal.extend(near_half_space_distance))
         }
         PortalMode::MaskedImageHalfSpaceFrustum(None) => {
-            let near_half_space_normal = destination_transform.forward();
+            let near_half_space_normal = destination_transform.forward().normalize_or_zero();
             let near_half_space_distance = - destination_transform.translation.dot(near_half_space_normal);
             frustum.half_spaces[4] = HalfSpace::new(near_half_space_normal.extend(near_half_space_distance))
         }

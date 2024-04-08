@@ -14,7 +14,7 @@ use bevy_render::{
         SpecializedMeshPipelineError,
     },
 };
-use bevy_reflect::{TypeUuid, TypePath};
+use bevy_reflect::TypePath;
 use bevy_pbr::{MaterialPipelineKey, MaterialPipeline};
 
 /// Add the material logic to [PortalsPlugin](super::PortalsPlugin)
@@ -26,13 +26,15 @@ pub(super) fn build_material(app: &mut App) {
         Shader::from_wgsl
     );
 
-    app.add_plugins(MaterialPlugin::<PortalMaterial>::default());
+    app.add_plugins(MaterialPlugin::<PortalMaterial> {
+        prepass_enabled: false,
+        ..Default::default()
+    });
 }
 
 /// Material with the portal shader (renders the image without deformation using the mesh as a mask).
-#[derive(Asset, AsBindGroup, Clone, TypeUuid, TypePath)]
+#[derive(Asset, AsBindGroup, Clone, TypePath)]
 #[bind_group_data(PortalMaterialKey)]
-#[uuid = "436e9734-867f-4faf-9b5f-81703017a018"]
 pub struct PortalMaterial {
     #[texture(0)]
     #[sampler(1)]

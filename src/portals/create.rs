@@ -161,7 +161,7 @@ pub fn create_portals(
 fn create_portal(
     CreatePortalParams {
         commands,
-        // portal_materials,
+        portal_materials,
         meshes,
         materials,
         main_camera_query,
@@ -220,15 +220,9 @@ fn create_portal(
     let portal_image = size_params.images.add(portal_image);
 
     // Material that the portal camera will render to
-    // let portal_material = portal_materials.add(PortalMaterial {
-    //     color_texture: Some(portal_image.clone()),
-    //     cull_mode: create_portal.cull_mode
-    // });
-    let portal_material = materials.add(StandardMaterial {
-        base_color_texture: Some(portal_image.clone()),
-        cull_mode: create_portal.cull_mode,
-        unlit: true,
-        ..Default::default()
+    let portal_material = portal_materials.add(PortalMaterial {
+        color_texture: Some(portal_image.clone()),
+        cull_mode: create_portal.cull_mode
     });
 
     // Create or get the destination entity
@@ -399,7 +393,7 @@ fn create_portal(
 #[derive(SystemParam)]
 pub struct CreatePortalParams<'w, 's> {
     commands: Commands<'w, 's>,
-    // portal_materials: ResMut<'w, Assets<PortalMaterial>>,
+    portal_materials: ResMut<'w, Assets<PortalMaterial>>,
     meshes: ResMut<'w, Assets<Mesh>>,
     materials: ResMut<'w, Assets<StandardMaterial>>,
     main_camera_query: Query<'w, 's, (
